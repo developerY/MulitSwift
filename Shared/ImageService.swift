@@ -19,7 +19,7 @@ class ImageService: ObservableObject {
     
     // From Swift 5.5
     func inCount() async {
-        await Task.sleep(2_000_000_000) // called evey two sec.
+        await Task.sleep(2_000_000_000) // called every two sec.
         count += 1
         url = URL(string: "https://source.unsplash.com/random/300x200?sig=\(Int.random(in: 1..<100))")
     }
@@ -30,13 +30,4 @@ class ImageService: ObservableObject {
             await inCount()
         }
     }
-    
-    init() {
-        Task.init {
-            await starTimer()
-        }
-    }
-
-    
-    
 }

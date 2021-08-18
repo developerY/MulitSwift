@@ -27,6 +27,8 @@ class OldDataController {
 }
 /*:
 That works, but with `@MainActor` we can guarantee that `save()` is always called on the main thread as if we specifically ran it using `DispatchQueue.main`:
+ 
+ **You can think of @MainActor as DispatchQueue.main**
 */
 class NewDataController {
     @MainActor func save() {

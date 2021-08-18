@@ -20,8 +20,11 @@ struct ContentView: View {
                 }*/
             AsyncImage(url: imageService.url) { image in
                 image.resizable()
+                    //.aspectRatio(contentMode:.fit)
             } placeholder: {
                 ProgressView()
+            }.task {
+               await imageService.starTimer()
             }
     
         }
