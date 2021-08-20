@@ -61,7 +61,7 @@ func containsExactNumber() async {
     print("We found a match", match)
 }
 
-func containsEvenNumber() async {
+func summingNumbers() async {
     let sum = await doubles.reduce(0, +)
     print("Sum val ", sum)
 }
@@ -69,9 +69,13 @@ func containsEvenNumber() async {
 sleep(2)
 
 Task.init {
+    await summingNumbers()
     await containsExactNumber()
-    await containsEvenNumber()
 }
+/*Task.init {
+    await summingNumbers()
+    await containsExactNumber()
+}*/
 /*:
 Again, you need to be in an async context to use this.
 

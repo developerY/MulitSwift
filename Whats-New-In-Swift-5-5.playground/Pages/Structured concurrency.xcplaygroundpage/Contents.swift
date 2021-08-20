@@ -198,7 +198,7 @@ func printTaskGroupMessage() async {
         var collected = [String]()
 
         for await value in group {
-            //await Task.sleep(1_000_000) // this will scrable the words
+            // await Task.sleep(2_000_000) // this might scramble the words
             collected.append(value)
         }
         let ans = collected.joined(separator: " ")

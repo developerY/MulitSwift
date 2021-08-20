@@ -15,8 +15,15 @@ For example, if we wanted to write code that fetched 100,000 weather records fro
 import Foundation
 import SwiftUI
 
+// Command - Shift - a
+nonisolated public func requestAuthorization(completionHandler: @escaping () -> Void ) {
+    Task.init {
+        completionHandler()
+    }
+}
+
 func fetchWeatherHistory(completion: @escaping ([Double]) -> Void) {
-    // Complex networking code here; we'll just send back 100,000 random temperatures
+    // Complex networking code here; we'll just send back 100 random temperatures
     DispatchQueue.global().async {
         let results = (1..<100).map { _ in Double.random(in: -10...30) }
         completion(results) // records at the call sight
