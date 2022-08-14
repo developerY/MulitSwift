@@ -1,11 +1,20 @@
 /*:
-# What’s new in Swift 5.5
+# What’s new in Swift 5.5 - 5.7
 
 * Created by [Paul Hudson](https://twitter.com/twostraws) – [Hacking with Swift](https://www.hackingwithswift.com)
+ 
+ 
+ * Created by [Nick Sarno](https://www.nicksarno.com/) - [SwitfulThinking](https://github.com/SwiftfulThinking) - [Support the work](https://www.buymeacoffee.com/nicksarno/)
 
-This playground is designed to showcase new features introduced in Swift 5.5. If you hit problems or have questions, you're welcome to tweet me [@twostraws](https://twitter.com/twostraws) or email <paul@hackingwithswift.com>.
+This playground is designed to showcase new features introduced in Swift 5.5 - 5.7.
+ 
+ These two pleople should get all the credit.
+ Please support them!
 
 &nbsp;
+ * [Do try catch](DoCatchTryThrows)
+ * [Struct, Class, Actor - Stack / Heap](StructClassActor)
+ * [Async SwiftUI](Async%20SwiftUI)
  * [Async await](Async%20await)
  * [Async sequences](Async%20sequences)
  * [Effectful read-only properties](Effectful%20read-only%20properties)

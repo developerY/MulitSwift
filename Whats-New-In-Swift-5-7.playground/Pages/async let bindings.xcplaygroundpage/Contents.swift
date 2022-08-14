@@ -17,18 +17,36 @@ struct UserData {
     let username: String
     let friends: [String]
     let highScores: [Int]
+    let ans : Int
 }
     
 func getUser() async -> String {
-    "Taylor Swift"
+    print("Get Name DONE!")
+    return "Taylor Swift"
 }
     
 func getHighScores() async -> [Int] {
-    [42, 23, 16, 15, 8, 4]
+    print("Get HS DONE!")
+    return [42, 23, 16, 15, 8, 4]
 }
     
 func getFriends() async -> [String] {
-    ["Eric", "Maeve", "Otis"]
+    print("Get Friends DONE!")
+    return ["Eric", "Maeve", "Otis"]
+}
+
+func fibNum1000() async -> Int {
+    let ans = await fib(of: 10)
+    print("fib 1000 done")
+    return ans
+}
+
+// Started first but others end first
+func fib(of number: Int) async -> Int {
+    if number < 2 { return number }
+    async let first = fib(of: number - 2)
+    async let second = fib(of: number - 1)
+    return  await first + second
 }
 /*:
 If we wanted to create a `User` instance from all three of those values, `async let` is the easiest way – it run each function concurrently, wait for all three to finish, then use them to create our object.
@@ -36,11 +54,13 @@ If we wanted to create a `User` instance from all three of those values, `async 
 Here’s how it looks:
 */
 func printUserDetails() async { // three diff types.
+    async let num1001 = fibNum1000()
     async let username = getUser()
     async let scores = getHighScores()
     async let friends = getFriends()
+
+    let user = await UserData(username: username, friends: friends, highScores: scores, /*ans:5*/ ans:num1001)
     
-    let user = await UserData(username: username, friends: friends, highScores: scores)
     print("Hello, my name is \(user.username), and I have \(user.friends.count) friends!")
 }
 
@@ -59,6 +79,10 @@ enum NumberError: Error {
     case outOfRange
 }
 
+enum TestName :Error {
+    case bad
+}
+
 func fibonacci(of number: Int) async throws -> Int {
     if number < 0 || number > 22 {
         throw NumberError.outOfRange
@@ -71,10 +95,6 @@ func fibonacci(of number: Int) async throws -> Int {
          //try await first + try await second
 }
 
-enum TestName :Error {
-    case bad
-}
-
 func getName(tag: Bool) async throws -> String {
     guard tag == true else {throw TestName.bad}
     return "Swift"
@@ -85,7 +105,7 @@ func getNumber (tag: Bool) async throws -> Int {
     return 27
 }
 
-Task.init {
+Task {
     do {
         try await print("Name \(getName(tag: true)) Num \(getNumber(tag: true))")
         print("Name \(try await getName(tag: true)) Num \(try await getNumber(tag: true))")

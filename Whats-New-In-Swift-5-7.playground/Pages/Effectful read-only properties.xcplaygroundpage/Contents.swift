@@ -19,13 +19,16 @@ enum FileError: Error {
 
 struct BundleFile {
     let filename: String
+    let stringToSave = "The string I want to save"
+
     
     var contents: String {
         get async throws {
-            guard let url = Bundle.main.url(forResource: filename, withExtension: nil) else {
+            guard let url = Bundle.main.url(forResource: filename /*try nil*/, withExtension: nil) else {
                 throw FileError.missing
             }
-    
+            
+            
             do {
                 return try String(contentsOf: url)
             } catch {
@@ -39,10 +42,10 @@ Because `contents` is both async and throwing, we must use `try await` when tryi
 */
 func printHighScores() async throws {
     let file = BundleFile(filename: "highscores")
-    try await print(file.contents)
+    try await print("This is the contents = '\(file.contents)'")
 }
 
-Task.init {
+Task {
     do {
         print ("High scores bundle", try await printHighScores())
     } catch {

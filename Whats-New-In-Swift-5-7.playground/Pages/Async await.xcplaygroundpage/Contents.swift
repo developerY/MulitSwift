@@ -14,6 +14,7 @@ For example, if we wanted to write code that fetched 100,000 weather records fro
 */
 import Foundation
 import SwiftUI
+import PlaygroundSupport
 
 // Command - Shift - a
 nonisolated public func requestAuthorization(completionHandler: @escaping () -> Void ) {
@@ -147,7 +148,7 @@ func updateUsers() async {
     }
 }
 
-Task.init {
+Task {
     await updateUsers()
 }
 /*:
@@ -159,7 +160,89 @@ With async/await now in Swift itself, the `Result` type introduced in Swift 5.0 
 
 All the `async` functions you’ve seen so far have in turn been called by other `async` functions, which is intentional: taken by itself this Swift Evolution proposal does not actually provide any way to run asynchronous code from a synchronous context. Instead, this functionality is defined in a separate Structured Concurrency proposal, although hopefully we’ll see some major updates to Foundation too.
 
-&nbsp;
+&nbsp;*/
 
+/*: From Nick */
+
+class AsyncAwaitBootcampViewModel: ObservableObject {
+    
+    @Published var dataArray: [String] = []
+    
+    func addTitle1() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.dataArray.append("Title1 : \(Thread.current)")
+        }
+    }
+    
+    func addTitle2() {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+            let title = "Title2 : \(Thread.current)"
+            DispatchQueue.main.async {
+                self.dataArray.append(title)
+                
+                let title3 = "Title3 : \(Thread.current)"
+                self.dataArray.append(title3)
+            }
+        }
+    }
+    
+    func addAuthor1() async {
+        let author1 = "Author1 : \(Thread.current)"
+        self.dataArray.append(author1)
+        
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        
+        let author2 = "Author2 : \(Thread.current)"
+        await MainActor.run(body: {
+            self.dataArray.append(author2)
+            
+            let author3 = "Author3 : \(Thread.current)"
+            self.dataArray.append(author3)
+        })
+    }
+    
+    func addSomething() async {
+        
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        let something1 = "Something1 : \(Thread.current)"
+        await MainActor.run(body: {
+            self.dataArray.append(something1)
+            
+            let something2 = "Something2 : \(Thread.current)"
+            self.dataArray.append(something2)
+        })
+        
+    }
+    
+    
+}
+
+struct AsyncAwaitBootcamp: View {
+    
+    @StateObject private var viewModel = AsyncAwaitBootcampViewModel()
+    
+    var body: some View {
+        List {
+            ForEach(viewModel.dataArray, id: \.self) { data in
+                Text(data)
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.addAuthor1()
+                await viewModel.addSomething()
+                
+                let finalText = "FINAL TEXT : \(Thread.current)"
+                viewModel.dataArray.append(finalText)
+            }
+//            viewModel.addTitle1()
+//            viewModel.addTitle2()
+        }
+    }
+}
+
+PlaygroundPage.current.setLiveView(AsyncAwaitBootcamp())
+
+/*:
 [< Previous](@previous)           [Home](Introduction)           [Next >](@next)
 */

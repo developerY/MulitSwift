@@ -72,7 +72,7 @@ In its simplest form, you can start concurrent work by creating a new `Task` obj
 
 So, we might call `fibonacci(of:)` many times on a background thread, in order to calculate the first 5 numbers in the sequence:
 */
-func printFibonacciSequence() async {
+func printFibonacciSequence() async -> String {
     let task1 = Task { () -> [Int] in  // takes void and returns an array of Int
         var numbers = [Int]()
     
@@ -86,10 +86,11 @@ func printFibonacciSequence() async {
     
     let result1 = await task1.value
     print("Fibonacci sequence (5): \(result1)")
+    return "DONE"
 }
 
 print("we start Fib(5) task")
-Task.init {
+Task {
     await print("run Fib(5) ", printFibonacciSequence())
 }
 print("we end but the code is still running :-)")
@@ -125,9 +126,15 @@ func runMultipleCalculations() async throws {
         try await getWeatherReadings(for: "Rome")
     }
     
+    let task3 = Task {
+        try await getWeatherReadings(for: "Does not exist")
+    }
+    
     let result1 = await task1.value // result1 is ready to use
     let result2 = try await task2.value // resualt 2 is ready to use
     print("Fibonacci (7): \(result1) Rome weather: \(result2)")
+
+    let result3 = try await task3.value // resualt 3 is ready to use with error
 }
 
 Task.init {
@@ -149,20 +156,20 @@ You can see both sleeping and cancellation in the following code example, which 
 func cancelSleepingTask() async {
     let task = Task { () -> String in
         print("Starting Sleep/Cancle")
-        await Task.sleep(1_000_000_000) // sleep for 1 sec.
+        try await Task.sleep(nanoseconds: 1_000_000_000) // sleep for 1 sec.
         try Task.checkCancellation()
         return "Done"
     }
     
     // The task has started, but we'll cancel it while it sleeps
-    task.cancel()
+    task.cancel() // NOTE: Comment out
     
     do {
         let value = try await task.value
         let result = await task.result
         print("Value: \(value) with result \(result)")
     } catch {
-        print("Task was cancelled.", error)
+        print("Task was cancelled.", error) // NOTE: <--We see this
     }
 }
 

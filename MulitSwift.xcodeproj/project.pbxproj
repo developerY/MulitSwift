@@ -31,7 +31,7 @@
 		813E1BCB26C9A9100086A2FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		813E1BD026C9A9100086A2FE /* MulitSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MulitSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		813E1BD626C9A9100086A2FE /* MulitSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MulitSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		81BB382726C9A93F006CBE91 /* Whats-New-In-Swift-5-5.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = "Whats-New-In-Swift-5-5.playground"; sourceTree = "<group>"; };
+		81BB382726C9A93F006CBE91 /* Whats-New-In-Swift-5-7.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = "Whats-New-In-Swift-5-7.playground"; sourceTree = "<group>"; };
 		81BB382A26C9B3D4006CBE91 /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
 		81BB382D26C9B67A006CBE91 /* ContenvView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContenvView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -57,7 +57,7 @@
 		813E1BC026C9A90E0086A2FE = {
 			isa = PBXGroup;
 			children = (
-				81BB382726C9A93F006CBE91 /* Whats-New-In-Swift-5-5.playground */,
+				81BB382726C9A93F006CBE91 /* Whats-New-In-Swift-5-7.playground */,
 				813E1BC526C9A90E0086A2FE /* Shared */,
 				813E1BD126C9A9100086A2FE /* Products */,
 			);

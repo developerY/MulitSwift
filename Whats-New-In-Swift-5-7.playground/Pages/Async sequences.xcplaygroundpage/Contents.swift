@@ -14,12 +14,14 @@ For example, we could make a `DoubleGenerator` sequence that starts from 1 and d
 */
 import SwiftUI
 
+/// An AsyncSequence resembles the Sequence type — offering a list of values you can step through one at a time — and adds asynchronicity.
 struct DoubleGenerator: AsyncSequence {
     typealias Element = Int
     
     struct AsyncIterator: AsyncIteratorProtocol {
         var current = 1
     
+        // meets protocol
         mutating func next() async -> Int? {
             defer { current &*= 2 }
     
@@ -41,15 +43,25 @@ struct DoubleGenerator: AsyncSequence {
 
 Once you have your asynchronous sequence, you can loop over its values by using `for await` in an async context, like this:
 */
-func printAllDoubles() async {
+func printAllDoubles() async -> [Int] {
+    var nums: [Int] = []
     for await number in DoubleGenerator() {
-        print(number)
+        nums.append(number)
     }
+    return nums.filter({$0 % 4 == 0})
 }
 
 print("We start")
-Task.init {await printAllDoubles()}
-print("Done but still running ...")
+var myNums:[Int] = []
+Task {
+    myNums = await printAllDoubles()
+    print("\nPrinting numbers:")
+    myNums.forEach{ num in
+        print(num)
+    }
+}
+print("Done but still running ... and printing nothing !!! \(myNums)") // FIXME: We get nothing here!
+
    
 /*:
 The `AsyncSequence` protocol also provides default implementations of a variety of common methods, such as `map()`, `compactMap()`, `allSatisfy()`, and more. For example, we could check whether our generator outputs a specific number like this:
@@ -67,15 +79,12 @@ func summingNumbers() async {
 }
 
 sleep(2)
-
-Task.init {
+print("\n\n\n")
+// MARK: Summing Numbers
+Task {
     await summingNumbers()
     await containsExactNumber()
 }
-/*Task.init {
-    await summingNumbers()
-    await containsExactNumber()
-}*/
 /*:
 Again, you need to be in an async context to use this.
 
