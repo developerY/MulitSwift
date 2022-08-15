@@ -10,16 +10,27 @@
 
 To demonstrate the problem actors solve, consider this Swift code that creates a `RiskyCollector` class able to trade cards from their deck with another collector:
 */
+import Foundation
+
 class RiskyCollector {
+    let name:String
     var deck: Set<String>
     
-    init(deck: Set<String>) {
+    init(name:String, deck: Set<String>) {
         self.deck = deck
+        self.name = name
     }
     
-    func send(card selected: String, to person: RiskyCollector) -> Bool {
+    func send(card selected: String, to person: RiskyCollector, isWait:Bool) -> Bool {
+        
         guard deck.contains(selected) else { return false }
-    
+        
+        if (isWait) {
+            print("start sleep")
+            sleep(1)
+            print("end sleep")
+        }
+
         deck.remove(selected)
         person.transfer(card: selected)
         return true
@@ -27,6 +38,10 @@ class RiskyCollector {
     
     func transfer(card: String) {
         deck.insert(card)
+    }
+    
+    func printDeck() {
+        print("\(name) has \(deck)")
     }
 }
 /*:
@@ -47,14 +62,19 @@ So, we could rewrite out `RiskyCollector` class to be a `SafeCollector` actor, l
 */
 actor SafeCollector {
     var deck: Set<String>
+    let name: String
     
-    init(deck: Set<String>) {
+    init(name:String, deck: Set<String>) {
         self.deck = deck
+        self.name = name
     }
     
-    func send(card selected: String, to person: SafeCollector) async -> Bool {
+    func send(card selected: String, to person: SafeCollector, isWait:Bool) async -> Bool {
         guard deck.contains(selected) else { return false }
-    
+        if (isWait) {
+            sleep(1)
+        }
+        
         deck.remove(selected)
         await person.transfer(card: selected)
         return true
@@ -63,6 +83,11 @@ actor SafeCollector {
     func transfer(card: String) {
         deck.insert(card)
     }
+
+    func printDeck() {
+        print("\(name) has \(deck)")
+    }
+    
 }
 /*:
 There are several things to notice in that example:
@@ -87,7 +112,47 @@ Beyond actor isolation, there are two other important differences between actors
 
 The best way I’ve heard to explain how actors differ from classes is this: “actors pass messages, not memory.” So, rather than one actor poking directly around in another’s properties or calling their methods, we instead send a message asking for the data and let the Swift runtime handle it for us safely.
 
-&nbsp;
+&nbsp;*/
 
-[< Previous](@previous)           [Home](Introduction)           [Next >](@next)
+private var deck: Set = ["car", "boat", "plane", "house"]
+private var emptyDeck: Set<String> = []
+
+
+
+print("start risky")
+let sam = RiskyCollector(name:"Sam", deck: deck)
+let tim = RiskyCollector(name:"Tim", deck: emptyDeck)
+let adam = RiskyCollector(name:"adam", deck: emptyDeck)
+
+DispatchQueue.global().async {
+    print("sam got car ", sam.send(card: "car", to:tim, isWait: true))
+}
+
+DispatchQueue.global().async {
+    print("sam got car ", sam.send(card: "car", to:adam, isWait: false))
+}
+sleep(5)
+sam.printDeck()
+tim.printDeck()
+adam.printDeck()
+print("\n\nSafe\n")
+let samSafe = SafeCollector(name: "sam", deck: deck)
+let timSafe = SafeCollector(name: "tim", deck: emptyDeck)
+let adamSafe = SafeCollector(name:"adam", deck: emptyDeck)
+
+Task {
+    await print("sam got car ", samSafe.send(card: "car", to:timSafe, isWait: true))
+}
+
+Task {
+    await print("sam got car ", samSafe.send(card: "car", to:adamSafe, isWait: false))
+}
+sleep(5)
+Task {
+    await samSafe.printDeck()
+    await timSafe.printDeck()
+    await adamSafe.printDeck()
+}
+
+/*: [< Previous](@previous)           [Home](Introduction)           [Next >](@next)
 */

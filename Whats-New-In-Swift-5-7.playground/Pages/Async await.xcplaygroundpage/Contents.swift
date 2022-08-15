@@ -23,6 +23,8 @@ nonisolated public func requestAuthorization(completionHandler: @escaping () -> 
     }
 }
 
+
+// @escaping because outlives function
 func fetchWeatherHistory(completion: @escaping ([Double]) -> Void) {
     // Complex networking code here; we'll just send back 100 random temperatures
     DispatchQueue.global().async {
@@ -204,7 +206,7 @@ class AsyncAwaitBootcampViewModel: ObservableObject {
     func addSomething() async {
         
         try? await Task.sleep(nanoseconds: 2_000_000_000)
-        let something1 = "Something1 : \(Thread.current)"
+        let something1 = "Something1 : \(Thread.current))"
         await MainActor.run(body: {
             self.dataArray.append(something1)
             
