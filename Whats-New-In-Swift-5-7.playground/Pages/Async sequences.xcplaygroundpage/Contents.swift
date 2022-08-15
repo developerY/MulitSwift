@@ -45,7 +45,7 @@ Once you have your asynchronous sequence, you can loop over its values by using 
 */
 func printAllDoubles() async -> [Int] {
     var nums: [Int] = []
-    for await number in DoubleGenerator() {
+    for await number in DoubleGenerator() {  // asynchronous for loop!
         nums.append(number)
     }
     return nums.filter({$0 % 4 == 0})

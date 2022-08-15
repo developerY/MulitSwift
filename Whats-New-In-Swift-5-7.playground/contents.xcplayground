@@ -7,8 +7,8 @@
         <page name='Async SwiftUI'/>
         <page name='Async await'/>
         <page name='Async sequences'/>
-        <page name='Effectful read-only properties'/>
         <page name='Structured concurrency'/>
+        <page name='Effectful read-only properties'/>
         <page name='async let bindings'/>
         <page name='Continuations for interfacing async tasks with synchronous code'/>
         <page name='Actors'/>

@@ -30,7 +30,8 @@ class Manager {
         }
     }
     
-    // does not throw but uses the Result iOS 8.0+
+    // does not throw but uses the Result iOS 8.0+ (Swift 5.0?)
+    // "Until Swift 5.0 added the Result type, it was harder to send back errors with completion handlers" - Paul
     func getTitle2() -> Result<String, Error> {
         if isActive {
             return .success("NEW TEXT!")

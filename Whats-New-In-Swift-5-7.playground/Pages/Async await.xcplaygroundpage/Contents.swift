@@ -18,17 +18,18 @@ import PlaygroundSupport
 
 // Command - Shift - a
 nonisolated public func requestAuthorization(completionHandler: @escaping () -> Void ) {
-    Task.init {
+    Task {
         completionHandler()
     }
 }
 
-
+// var rCount = 1 rCount = Int.random(in: 0...10)
 // @escaping because outlives function
 func fetchWeatherHistory(completion: @escaping ([Double]) -> Void) {
     // Complex networking code here; we'll just send back 100 random temperatures
     DispatchQueue.global().async {
         let results = (1..<100).map { _ in Double.random(in: -10...30) }
+        
         completion(results) // records at the call sight
     }
 }
@@ -93,7 +94,7 @@ func processWeather() async {
     print("Task Server average: \(average) response:  \(response)")
 }
 
-Task.init{
+Task {
     await processWeather()
 }
 /*:

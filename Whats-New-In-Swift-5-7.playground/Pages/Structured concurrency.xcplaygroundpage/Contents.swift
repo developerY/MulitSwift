@@ -54,9 +54,12 @@ func fibonacci(of number: Int) -> Int {
 /*:
 The simplest async approach introduced by structured concurrency is the ability to use the `@main` attribute to go immediately into an async context, which is done simply by marking the `main()` method with `async`, like this:
 */
-// unless you file is called Main.swift
 
-//@main
+// "In swift you can still use main.swift and it will be the entry point for your app."
+// @main - Adding this annotation to a class, struct, or enum means that it contain the entry point for the app and it should provide a static main function.
+// unless you file is called Main.swift
+// "You can’t mix these approaches. A program can only have one entry point. If you have a main.swift you cannot also use @main." - useyourloaf
+//@main (Swift 5.3)
 struct Main {
     static func main() async throws {
         let readings = try await getWeatherReadings(for: "London")
@@ -84,7 +87,7 @@ func printFibonacciSequence() async -> String {
         return numbers
     }
     
-    let result1 = await task1.value
+    let result1 = await task1.value // let task1: Task<[Int], Never>
     print("Fibonacci sequence (5): \(result1)")
     return "DONE"
 }
@@ -92,8 +95,9 @@ func printFibonacciSequence() async -> String {
 print("we start Fib(5) task")
 Task {
     await print("run Fib(5) ", printFibonacciSequence())
+    print("now we can use the results")
 }
-print("we end but the code is still running :-)")
+print("we end but the code is still running so we can not use the results here  :-)")
 waitDoneBeforeNext()
 /*:
 As you can see, I’ve needed to explicitly write `Task { () -> [Int] in` so that Swift understands that the task is going to return, but if your task code is simpler that isn’t needed. For example, we could have written this and gotten exactly the same result:
@@ -103,7 +107,7 @@ let task1 = Task {
 }
 
 
-Task.init {
+Task {
     print("running task1 Fib(12) with no return", await task1.value)
 }
 waitDoneBeforeNext()
@@ -118,15 +122,15 @@ When it comes to reading the finished numbers, `await task1.value` will make sur
 For task operations that throw uncaught errors, reading your task’s `value` property will automatically also throw errors. So, we could write a function that performs two pieces of work at the same time then waits for them both to complete:
 */
 func runMultipleCalculations() async throws {
-    let task1 = Task {
+    let task1 = Task { // Started
         (0..<7).map(fibonacci)
     }
     
-    let task2 = Task {
+    let task2 = Task { // Started
         try await getWeatherReadings(for: "Rome")
     }
     
-    let task3 = Task {
+    let task3 = Task { // Started
         try await getWeatherReadings(for: "Does not exist")
     }
     
@@ -137,9 +141,11 @@ func runMultipleCalculations() async throws {
     let result3 = try await task3.value // resualt 3 is ready to use with error
 }
 
-Task.init {
-    // do { } catch not error?
-    print("multi task", try await runMultipleCalculations())
+Task {
+    // catch not error?
+    //do {
+        print("multi task", try await runMultipleCalculations())
+    //} catch { print("\(error)")}
 }
 waitDoneBeforeNext()
 /*:
@@ -198,6 +204,9 @@ func printTaskGroupMessage() async {
 
         group.addTask { "From" }
         group.addTask { "A" }
+        
+        // in the middel
+        group.addTask { await printFibonacciSequence() }
 
         group.addTask { "Task" }
         group.addTask { "Group" }
@@ -265,7 +274,7 @@ func printAllWeatherReadings() async {
     }
 }
 
-Task.init{
+Task {
     print("Start Task Weather with error:", await printAllWeatherReadings())
 }
 waitDoneBeforeNext()
