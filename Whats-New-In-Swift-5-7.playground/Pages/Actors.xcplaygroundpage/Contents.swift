@@ -21,19 +21,25 @@ class RiskyCollector {
         self.name = name
     }
     
-    func send(card selected: String, to person: RiskyCollector, isWait:Bool) -> Bool {
+    func send(card selected: String, to person: RiskyCollector) -> Bool {
+        var didTransfer = false
+        print("sent to \(person.name) ")
+        guard deck.contains(selected) else {
+            print("\(name) dose not have \(selected)")
+            return false }
         
-        guard deck.contains(selected) else { return false }
-        
-        if (isWait) {
-            print("start sleep")
-            sleep(1)
-            print("end sleep")
+        print("--- Deck has \(selected) --- for \(person.name)")
+        // sleep(1)
+        if let removed = deck.remove(selected) {
+            print("The deck tranfered \(removed) for \(person.name)")
+            didTransfer = true
+        } else {
+            print("The deck is was wrong for \(person.name)")
+            didTransfer = false
         }
-
-        deck.remove(selected)
         person.transfer(card: selected)
-        return true
+
+        return didTransfer
     }
     
     func transfer(card: String) {
@@ -69,15 +75,30 @@ actor SafeCollector {
         self.name = name
     }
     
-    func send(card selected: String, to person: SafeCollector, isWait:Bool) async -> Bool {
-        guard deck.contains(selected) else { return false }
-        if (isWait) {
-            sleep(1)
-        }
+    func send(card selected: String, to person: SafeCollector) async -> Bool {
         
-        deck.remove(selected)
+        var didTransfer = false
+        print("sent to \(person.name) ")
+        guard deck.contains(selected) else {
+            print("\(name) dose not have \(selected)")
+            return false
+        }
+
+        print("--- Deck has \(selected) --- for \(person.name)")
+        
+        // This is dangerous because of thread reentry
+        // try? await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        if let removed = deck.remove(selected) {
+            print("The deck tranfered \(removed) for \(person.name)")
+            didTransfer = true
+        } else {
+            print("The deck is was wrong for \(person.name)")
+            didTransfer = false
+        }
         await person.transfer(card: selected)
-        return true
+
+        return didTransfer
     }
     
     func transfer(card: String) {
@@ -125,34 +146,34 @@ let tim = RiskyCollector(name:"Tim", deck: emptyDeck)
 let adam = RiskyCollector(name:"adam", deck: emptyDeck)
 
 DispatchQueue.global().async {
-    print("sam got car ", sam.send(card: "car", to:tim, isWait: true))
+    print("sam give item tim ", sam.send(card: "car", to:tim))
 }
-
+// sleep (1) // simple sleep fixed the timing issue
 DispatchQueue.global().async {
-    print("sam got car ", sam.send(card: "car", to:adam, isWait: false))
+    print("sam give item to adam", sam.send(card: "car", to:adam))
 }
-sleep(5)
+sleep(10)
 sam.printDeck()
 tim.printDeck()
 adam.printDeck()
+
+
 print("\n\nSafe\n")
-let samSafe = SafeCollector(name: "sam", deck: deck)
-let timSafe = SafeCollector(name: "tim", deck: emptyDeck)
-let adamSafe = SafeCollector(name:"adam", deck: emptyDeck)
+let samSafe = SafeCollector(name: "safeSam", deck: deck)
+let timSafe = SafeCollector(name: "safeTim", deck: emptyDeck)
+let adamSafe = SafeCollector(name:"safeAdam", deck: emptyDeck)
 
 Task {
-    await print("sam got car ", samSafe.send(card: "car", to:timSafe, isWait: true))
-}
-
-Task {
-    await print("sam got car ", samSafe.send(card: "car", to:adamSafe, isWait: false))
-}
-sleep(5)
-Task {
+    let safeTim = await samSafe.send(card: "car", to:timSafe)
+    let safeAdam = await samSafe.send(card: "car", to:adamSafe)
+    
+    print("safeTim got car \(safeTim)")
+    print("safeAdam got car \(safeAdam)")
     await samSafe.printDeck()
     await timSafe.printDeck()
     await adamSafe.printDeck()
 }
+sleep(5)
 
 /*: [< Previous](@previous)           [Home](Introduction)           [Next >](@next)
 */

@@ -63,6 +63,10 @@ print("Counter Struct", counterStruct.getVal())
 
 sleep(2)
 
+
+/*
+ There is no await so do not have to thread reentery. 
+ */
 actor CounterActor {
     var value = 0
     

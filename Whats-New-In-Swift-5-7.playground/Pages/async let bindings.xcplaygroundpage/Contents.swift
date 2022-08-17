@@ -54,7 +54,7 @@ If we wanted to create a `User` instance from all three of those values, `async 
 Here’s how it looks:
 */
 func printUserDetails() async { // three diff types.
-    async let num1001 = fibNum1000()
+    async let num1001 = fibNum1000() // starts immediate
     async let username = getUser()
     async let scores = getHighScores()
     async let friends = getFriends()
@@ -64,7 +64,7 @@ func printUserDetails() async { // three diff types.
     print("Hello, my name is \(user.username), and I have \(user.friends.count) friends!")
 }
 
-Task.init {
+Task {
     await printUserDetails()
 }
 sleep(2)

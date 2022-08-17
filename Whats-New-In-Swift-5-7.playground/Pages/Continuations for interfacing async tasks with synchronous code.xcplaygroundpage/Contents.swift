@@ -53,7 +53,7 @@ func printNews() async {
 
 print("These are the items")
 
-Task.init {
+Task {
     await printNews()
 }
 /*:
