@@ -171,20 +171,21 @@ class AsyncAwaitBootcampViewModel: ObservableObject {
     
     @Published var dataArray: [String] = []
     
-    func addTitle1() {
+    // Running on the Main Thread
+    func runonMain() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.dataArray.append("Title1 : \(Thread.current)")
+            self.dataArray.append("Run On Main : \(Thread.current)")
         }
     }
     
-    func addTitle2() {
+    func runningOnGlobalToMain() {
         DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
-            let title = "Title2 : \(Thread.current)"
+            let run = "Run On Global : \(Thread.current)"
+            self.dataArray.append(run)
+            
             DispatchQueue.main.async {
-                self.dataArray.append(title)
-                
-                let title3 = "Title3 : \(Thread.current)"
-                self.dataArray.append(title3)
+                let run2 = "Run back on Main : \(Thread.current)"
+                self.dataArray.append(run2)
             }
         }
     }
@@ -196,6 +197,7 @@ class AsyncAwaitBootcampViewModel: ObservableObject {
         try? await Task.sleep(nanoseconds: 2_000_000_000)
         
         let author2 = "Author2 : \(Thread.current)"
+        
         await MainActor.run(body: {
             self.dataArray.append(author2)
             
@@ -207,7 +209,9 @@ class AsyncAwaitBootcampViewModel: ObservableObject {
     func addSomething() async {
         
         try? await Task.sleep(nanoseconds: 2_000_000_000)
+        
         let something1 = "Something1 : \(Thread.current))"
+        
         await MainActor.run(body: {
             self.dataArray.append(something1)
             
@@ -230,7 +234,15 @@ struct AsyncAwaitBootcamp: View {
                 Text(data)
             }
         }
+        .task {
+            // The task is cancled when the View is closed
+            let finalText = "Task on View : \(Thread.current)"
+            viewModel.dataArray.append(finalText)
+        }
         .onAppear {
+            // Running on the Main Thread
+            // viewModel.runonMain()
+            // viewModel.runningOnGlobalToMain()
             Task {
                 await viewModel.addAuthor1()
                 await viewModel.addSomething()
@@ -238,9 +250,9 @@ struct AsyncAwaitBootcamp: View {
                 let finalText = "FINAL TEXT : \(Thread.current)"
                 viewModel.dataArray.append(finalText)
             }
-//            viewModel.addTitle1()
-//            viewModel.addTitle2()
+
         }
+
     }
 }
 
