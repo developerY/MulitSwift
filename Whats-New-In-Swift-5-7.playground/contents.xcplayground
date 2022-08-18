@@ -4,6 +4,7 @@
         <page name='Introduction'/>
         <page name='DoCatchTryThrows'/>
         <page name='StructClassActor'/>
+        <page name='LoadImage'/>
         <page name='Async SwiftUI'/>
         <page name='Async await'/>
         <page name='Async sequences'/>
@@ -12,6 +13,7 @@
         <page name='async let bindings'/>
         <page name='Continuations for interfacing async tasks with synchronous code'/>
         <page name='Actors'/>
+        <page name='ActorsCount'/>
         <page name='Global actors'/>
         <page name='Sendable and @Sendable closures'/>
         <page name='if for postfix member expressions'/>
@@ -20,7 +22,5 @@
         <page name='lazy now works in local contexts'/>
         <page name='Extend property wrappers to function and closure parameters'/>
         <page name='Extending static member lookup in generic contexts'/>
-        <page name='ActorsCount'/>
-        <page name='LoadImage'/>
     </pages>
 </playground>

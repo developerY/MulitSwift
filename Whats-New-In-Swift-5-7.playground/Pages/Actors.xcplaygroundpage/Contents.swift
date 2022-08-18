@@ -101,12 +101,21 @@ actor SafeCollector {
         return didTransfer
     }
     
+    // Actor-isolated instance method 'transfer(card:)' referenced must be isolated actor instance
     func transfer(card: String) {
         deck.insert(card)
     }
 
     func printDeck() {
         print("\(name) has \(deck)")
+    }
+    
+    nonisolated func staticData() -> String {
+        return "data that never changes"
+    }
+    
+    func dynamicData() -> String {
+        return "data that changes \(Int.random(in: 0...300))"
     }
     
 }
@@ -139,7 +148,6 @@ private var deck: Set = ["car", "boat", "plane", "house"]
 private var emptyDeck: Set<String> = []
 
 
-
 print("start risky")
 let sam = RiskyCollector(name:"Sam", deck: deck)
 let tim = RiskyCollector(name:"Tim", deck: emptyDeck)
@@ -162,6 +170,9 @@ print("\n\nSafe\n")
 let samSafe = SafeCollector(name: "safeSam", deck: deck)
 let timSafe = SafeCollector(name: "safeTim", deck: emptyDeck)
 let adamSafe = SafeCollector(name:"safeAdam", deck: emptyDeck)
+
+print(samSafe.staticData())
+// print(samSafe.dynamicData()) //Actor-isolated instance method 'dynamicData()' can not be referenced from a non-isolated context
 
 Task {
     let safeTim = await samSafe.send(card: "car", to:timSafe)
