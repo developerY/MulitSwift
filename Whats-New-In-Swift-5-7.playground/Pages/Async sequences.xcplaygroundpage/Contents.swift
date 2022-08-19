@@ -13,7 +13,7 @@ Using `AsyncSequence` is almost identical to using `Sequence`, with the exceptio
 For example, we could make a `DoubleGenerator` sequence that starts from 1 and doubles its number every time it’s called:
 */
 import SwiftUI
-
+// iOS 13.0+
 /// An AsyncSequence resembles the Sequence type — offering a list of values you can step through one at a time — and adds asynchronicity.
 struct DoubleGenerator: AsyncSequence {
     typealias Element = Int
@@ -45,7 +45,7 @@ Once you have your asynchronous sequence, you can loop over its values by using 
 */
 func printAllDoubles() async -> [Int] {
     var nums: [Int] = []
-    for await number in DoubleGenerator() {  // asynchronous for loop!
+    for await number in DoubleGenerator() {  // FOR AWAIT !!! asynchronous for loop!
         nums.append(number)
     }
     return nums.filter({$0 % 4 == 0})

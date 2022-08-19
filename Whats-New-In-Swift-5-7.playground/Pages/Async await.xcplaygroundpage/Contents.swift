@@ -165,7 +165,10 @@ All the `async` functions you’ve seen so far have in turn been called by other
 
 &nbsp;*/
 
-/*: From Nick */
+/*: From Nick
+ 
+ Understanding how threads move from background Global to Main
+ */
 
 class AsyncAwaitBootcampViewModel: ObservableObject {
     
@@ -244,6 +247,8 @@ struct AsyncAwaitBootcamp: View {
             // viewModel.runonMain()
             // viewModel.runningOnGlobalToMain()
             Task {
+                
+                // These run in sequence
                 await viewModel.addAuthor1()
                 await viewModel.addSomething()
                 
