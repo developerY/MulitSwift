@@ -5,7 +5,6 @@
         <page name='DoCatchTryThrows'/>
         <page name='StructClassActor'/>
         <page name='LoadImage'/>
-        <page name='Async SwiftUI'/>
         <page name='Async await'/>
         <page name='Async sequences'/>
         <page name='Structured concurrency'/>
@@ -16,6 +15,7 @@
         <page name='ActorsCount'/>
         <page name='Global actors'/>
         <page name='Sendable and @Sendable closures'/>
+        <page name='Async SwiftUI'/>
         <page name='if for postfix member expressions'/>
         <page name='Allow interchangeable use of CGFloat and Double types'/>
         <page name='Codable synthesis for enums with associated values'/>

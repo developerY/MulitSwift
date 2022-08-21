@@ -67,11 +67,72 @@ Because these two functions are called in the same way, you can switch between t
 
  More from Paul Hudson
  [url](https://www.hackingwithswift.com/quick-start/concurrency/how-to-use-continuations-to-convert-completion-handlers-into-async-functions)
- */
-// more to come
+*/
+ 
+ /*:
+  From Nick
+  */
+
+func getData(url: URL) async throws -> Data {
+    do {
+        let (data, _) = try await URLSession.shared.data(from: url, delegate: nil)
+        return data
+    } catch {
+        throw error
+    }
+}
+
+func getData2(url: URL) async throws -> Data {
+    return try await withCheckedThrowingContinuation { continuation in
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                continuation.resume(returning: data)
+            } else if let error = error {
+                continuation.resume(throwing: error)
+            } else { // catch all errors
+                continuation.resume(throwing: URLError(.badURL)) // YOU MUST RESUME the task exactly ONCE
+            }
+        }
+        .resume() // a dataTask you must call resume.  Very different form Task.resume()
+    }
+}
+
+Task {
+    guard let url = URL(string: "https://picsum.photos/300") else { return }
+    
+    do {
+        let data = try await getData2(url: url)
+        
+        if let image = UIImage(data: data) {
+            await MainActor.run(body: { // move to main thread to pretend it is on the UI
+                print("This is the address of the image \(image)")
+            })
+        }
+    } catch {
+        print(error)
+    }
+}
+ 
+ func getHeartImageFromDatabase(completionHandler: @escaping (_ image: UIImage) -> ()) {
+     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+         completionHandler(UIImage(systemName: "heart.fill")!)
+     }
+ }
+ 
+ func getHeartImageFromDatabase() async -> UIImage {
+     await withCheckedContinuation { continuation in
+         getHeartImageFromDatabase { image in
+             continuation.resume(returning: image) // YOU MUST RESUME the task exactly ONCE
+         }
+     }
+ }
+
+Task {
+    await getHeartImageFromDatabase()
+}
+ 
+ 
 /*:
-Understand Continuatoins
-  
  &nbsp;
 
 [< Previous](@previous)           [Home](Introduction)           [Next >](@next)

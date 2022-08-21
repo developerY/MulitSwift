@@ -12,6 +12,14 @@ Using `AsyncSequence` is almost identical to using `Sequence`, with the exceptio
 
 For example, we could make a `DoubleGenerator` sequence that starts from 1 and doubles its number every time it’s called:
 */
+// Just like sequence
+// Iteration uses Swift Concurrency
+// Interator can Throw
+// It has map / filter / reduce
+
+//https://github.com/apple/swift-async-algorithms/tree/main/Sources/AsyncAlgorithms/AsyncAlgorithms.docc/Guides
+
+
 import SwiftUI
 // iOS 13.0+
 /// An AsyncSequence resembles the Sequence type — offering a list of values you can step through one at a time — and adds asynchronicity.
@@ -48,7 +56,8 @@ func printAllDoubles() async -> [Int] {
     for await number in DoubleGenerator() {  // FOR AWAIT !!! asynchronous for loop!
         nums.append(number)
     }
-    return nums.filter({$0 % 4 == 0})
+    // It could wait forever here ...
+    return nums.filter({$0 % 4 == 0})  // Filter
 }
 
 print("We start")
@@ -62,7 +71,6 @@ Task {
 }
 print("Done but still running ... and printing nothing !!! \(myNums)") // FIXME: We get nothing here!
 
-   
 /*:
 The `AsyncSequence` protocol also provides default implementations of a variety of common methods, such as `map()`, `compactMap()`, `allSatisfy()`, and more. For example, we could check whether our generator outputs a specific number like this:
 */
@@ -74,17 +82,78 @@ func containsExactNumber() async {
 }
 
 func summingNumbers() async {
-    let sum = await doubles.reduce(0, +)
+    let sum = await doubles.reduce(0, +)  // REDUCE
     print("Sum val ", sum)
 }
 
-sleep(2)
+func mapNumbers() {
+    let twoBigger = doubles.map { value in
+        return
+    }
+    print("Map of doubles \(twoBigger)")
+}
+
 print("\n\n\n")
 // MARK: Summing Numbers
+mapNumbers()
 Task {
     await summingNumbers()
     await containsExactNumber()
+    //await mapNumbers()
 }
+
+
+
+// Async Publisher
+
+// Async Stream
+
+
+// Async Algorithums
+// Processing values over time
+// Zip
+
+extension Array {
+    func send() -> AsyncStream<Element> {
+        AsyncStream {continuation in
+            Task {
+                for value in self {
+                    continuation.yield(value)
+                }
+            }
+        }
+    }
+}
+
+
+// * Combines values produced into tuples
+let a = [1,2,3]
+let b = ["a", "b", "c"]
+let c = ["😀","😡"]
+
+for await item in b.send() {  // FOR AWAIT !!! asynchronous for loop!
+    print(item)
+}
+/*
+for try await nums in merge(a.send(),b.send(), c.send()) {
+    print("num")
+}
+let appleFeed = URL(string: "http://www.example.com/ticker?symbol=AAPL")!.lines
+let nasdaqFeed = URL(string: "http://www.example.com/ticker?symbol=^IXIC")!.lines
+
+for try await (apple, nasdaq) in zip(appleFeed, nasdaqFeed) {
+  print("APPL: \(apple) NASDAQ: \(nasdaq)")
+}
+for try await ticker in merge(appleFeed, nasdaqFeed) {
+  print(ticker)
+}
+
+for try await (num1,num2) in zip(a.send(),b.send(), c.send()) {
+    try await print("\(num1)")
+}
+ */
+
+sleep(20)
 /*:
 Again, you need to be in an async context to use this.
 

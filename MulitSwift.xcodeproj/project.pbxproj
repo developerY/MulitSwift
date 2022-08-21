@@ -21,6 +21,8 @@
 		81BB382C26C9B3D4006CBE91 /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81BB382A26C9B3D4006CBE91 /* ImageService.swift */; };
 		81BB382E26C9B67A006CBE91 /* ContenvView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81BB382D26C9B67A006CBE91 /* ContenvView.swift */; };
 		81BB382F26C9B67A006CBE91 /* ContenvView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81BB382D26C9B67A006CBE91 /* ContenvView.swift */; };
+		DE9CF94D28B1B5170011D367 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = DE9CF94C28B1B5170011D367 /* AsyncAlgorithms */; };
+		DE9CF94F28B1B52A0011D367 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = DE9CF94E28B1B52A0011D367 /* AsyncAlgorithms */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,7 @@
 		81BB382726C9A93F006CBE91 /* Whats-New-In-Swift-5-7.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = "Whats-New-In-Swift-5-7.playground"; sourceTree = "<group>"; };
 		81BB382A26C9B3D4006CBE91 /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
 		81BB382D26C9B67A006CBE91 /* ContenvView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContenvView.swift; sourceTree = "<group>"; };
+		DE9CF95028B1BCCD0011D367 /* MulitSwift--iOS--Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "MulitSwift--iOS--Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE9CF94D28B1B5170011D367 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE9CF94F28B1B52A0011D367 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,9 +62,11 @@
 		813E1BC026C9A90E0086A2FE = {
 			isa = PBXGroup;
 			children = (
+				DE9CF95028B1BCCD0011D367 /* MulitSwift--iOS--Info.plist */,
 				81BB382726C9A93F006CBE91 /* Whats-New-In-Swift-5-7.playground */,
 				813E1BC526C9A90E0086A2FE /* Shared */,
 				813E1BD126C9A9100086A2FE /* Products */,
+				DE9CF93B28B1B2480011D367 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -86,6 +93,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		DE9CF93B28B1B2480011D367 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -102,6 +116,9 @@
 			dependencies = (
 			);
 			name = "MulitSwift (iOS)";
+			packageProductDependencies = (
+				DE9CF94C28B1B5170011D367 /* AsyncAlgorithms */,
+			);
 			productName = "MulitSwift (iOS)";
 			productReference = 813E1BD026C9A9100086A2FE /* MulitSwift.app */;
 			productType = "com.apple.product-type.application";
@@ -119,6 +136,9 @@
 			dependencies = (
 			);
 			name = "MulitSwift (macOS)";
+			packageProductDependencies = (
+				DE9CF94E28B1B52A0011D367 /* AsyncAlgorithms */,
+			);
 			productName = "MulitSwift (macOS)";
 			productReference = 813E1BD626C9A9100086A2FE /* MulitSwift.app */;
 			productType = "com.apple.product-type.application";
@@ -150,6 +170,9 @@
 				Base,
 			);
 			mainGroup = 813E1BC026C9A90E0086A2FE;
+			packageReferences = (
+				DE9CF93828B1B0AF0011D367 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
+			);
 			productRefGroup = 813E1BD126C9A9100086A2FE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -330,6 +353,7 @@
 				DEVELOPMENT_TEAM = 3F6FBJA4J7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MulitSwift--iOS--Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -360,6 +384,7 @@
 				DEVELOPMENT_TEAM = 3F6FBJA4J7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MulitSwift--iOS--Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -470,6 +495,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DE9CF93828B1B0AF0011D367 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DE9CF94C28B1B5170011D367 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DE9CF93828B1B0AF0011D367 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		DE9CF94E28B1B52A0011D367 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DE9CF93828B1B0AF0011D367 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		813E1BC626C9A90E0086A2FE /* MulitSwift.xcdatamodeld */ = {

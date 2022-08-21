@@ -12,6 +12,7 @@
  */
 import Foundation
 import SwiftUI
+import PlaygroundSupport
 
 enum LocationError: Error {
     case unknown_location
@@ -180,7 +181,7 @@ func cancelSleepingTask() async {
     }
 }
 
-Task.init {
+Task {
     print("Calling sleeping/cancle task", await cancelSleepingTask())
 }
 waitDoneBeforeNext()
@@ -311,24 +312,50 @@ private func fetchImage(urlString: String) async throws -> UIImage {
     }
 }
 
-Task {
-    var images: [UIImage] = []
-    images.reserveCapacity(urlStrings.count)
-    await withThrowingTaskGroup(of: UIImage?.self) { group in
-        for urlString in urlStrings {
-            group.addTask {
-                try? await fetchImage(urlString: urlString)
+struct ContentView: View {
+    let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    @State var images: [UIImage] = []
+    var body: some View {
+        
+        ScrollView {
+            LazyVGrid(columns: columns) {
+                ForEach(images, id: \.self) { image in
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 150)
+                }
+                
+            }.onAppear {
+                Task {
+                    images.reserveCapacity(urlStrings.count)
+                    try await withThrowingTaskGroup(of: UIImage?.self) { group in
+                        for urlString in urlStrings {
+                            
+                            // all task are same and only need to cancle one time
+                            group.addTask {
+                                // Might not get all the images "try?"
+                                try? await fetchImage(urlString: urlString) // not all images might show up becuase "try?"
+                            }
+                        }
+                        
+                        // Async For Loop!!!
+                        for try await image in group {
+                            if let image = image { // only add images we recieve
+                                images.append(image)
+                            }
+                        }
+                    }
+                }
+                
             }
         }
     }
-    
-    // Async For Loop!!!
-    for try await image in group {
-        if let image = image { // only add images we recieve
-            images.append(image)
-        }
-    }
 }
+
+PlaygroundPage.current
+    .setLiveView(ContentView())
+
 
 
 
