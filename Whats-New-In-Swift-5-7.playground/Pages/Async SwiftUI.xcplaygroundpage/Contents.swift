@@ -99,9 +99,9 @@ struct ContentView: View {
             }
 
             if (counterOn) {
-                Text("Counter Off")
-            } else {
                 BadCounterView()
+            } else {
+                Text("Counter Off")
             }
             
             // List of Text
