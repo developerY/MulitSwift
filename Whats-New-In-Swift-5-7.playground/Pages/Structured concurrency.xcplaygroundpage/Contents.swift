@@ -123,15 +123,15 @@ waitDoneBeforeNext()
  For task operations that throw uncaught errors, reading your task’s `value` property will automatically also throw errors. So, we could write a function that performs two pieces of work at the same time then waits for them both to complete:
  */
 func runMultipleCalculations() async throws {
-    let task1 = Task { // Started
+    let task1 = Task { // Started here
         (0..<7).map(fibonacci)
     }
     
-    let task2 = Task { // Started
+    let task2 = Task { // Started here
         try await getWeatherReadings(for: "Rome")
     }
     
-    let task3 = Task { // Started
+    let task3 = Task { // Started here
         try await getWeatherReadings(for: "Does not exist")
     }
     
@@ -142,12 +142,15 @@ func runMultipleCalculations() async throws {
     let result3 = try await task3.value // resualt 3 is ready to use with error
 }
 
-Task {
-    // catch not error?
-    //do {
-    print("multi task", try await runMultipleCalculations())
-    //} catch { print("\(error)")}
+func runMultiTask() {
+    Task {
+        // catch not error?
+        //do {
+        print("multi task", try await runMultipleCalculations())
+        //} catch { print("\(error)")}
+    }
 }
+runMultiTask()
 waitDoneBeforeNext()
 /*:
  Swift provides us with the built-in task priorities of `high`, `default`, `low`, and `background`. The code above doesn’t specifically set one so it will get `default`, but we could have said something like `Task(priority: .high)` to customize that. If you’re writing just for Apple’s platforms, you can also use the more familiar priorities of `userInitiated` in place of high, and `utility` in place of `low`, but you *can’t* access `userInteractive` because that is reserved for the main thread.

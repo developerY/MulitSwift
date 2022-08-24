@@ -8,6 +8,9 @@
 import Foundation
 import AsyncAlgorithms
 
+
+// Just put @MainActor Here
+//@MainActor // This solves everything.
 class ViewModel: ObservableObject {
     let persistenceController = PersistenceController.shared
     let exmURL = "https://www.7timer.info/bin/astro.php?lon=113.2&lat=23.1&ac=0&unit=metric&output=json&tzshift=0"

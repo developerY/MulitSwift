@@ -85,10 +85,10 @@ struct ZipListViewUI: View {
             HStack {
                 Button("get zip"){
                     viewModel.taskZip()
-                }
+                }.buttonStyle(.borderedProminent)
                 Button("delete zip"){
                     viewModel.deleteZip()
-                }
+                }.foregroundColor(.red)
             }
             List {
                 ForEach(viewModel.zipList, id:\.self) { str in
@@ -100,10 +100,10 @@ struct ZipListViewUI: View {
                 Button("get merge"){
                     print("call merge")
                     viewModel.taskMerge()
-                }
+                }.buttonStyle(.borderedProminent)
                 Button("delete merge"){
                     viewModel.deleteMerge()
-                }
+                }.foregroundColor(.red)
             }
             List {
                 ForEach(viewModel.mergeList, id:\.self) { num in

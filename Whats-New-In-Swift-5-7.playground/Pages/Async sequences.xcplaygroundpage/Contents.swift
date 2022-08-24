@@ -134,25 +134,7 @@ let c = ["😀","😡"]
 for await item in b.send() {  // FOR AWAIT !!! asynchronous for loop!
     print(item)
 }
-/*
-for try await nums in merge(a.send(),b.send(), c.send()) {
-    print("num")
-}
-let appleFeed = URL(string: "http://www.example.com/ticker?symbol=AAPL")!.lines
-let nasdaqFeed = URL(string: "http://www.example.com/ticker?symbol=^IXIC")!.lines
-
-for try await (apple, nasdaq) in zip(appleFeed, nasdaqFeed) {
-  print("APPL: \(apple) NASDAQ: \(nasdaq)")
-}
-for try await ticker in merge(appleFeed, nasdaqFeed) {
-  print(ticker)
-}
-
-for try await (num1,num2) in zip(a.send(),b.send(), c.send()) {
-    try await print("\(num1)")
-}
- */
-
+// Zip and Merge do not work in Playground
 sleep(20)
 /*:
 Again, you need to be in an async context to use this.

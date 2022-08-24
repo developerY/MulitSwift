@@ -16,25 +16,20 @@ enum ValidationError: Error {
     case tooLong
 }
 
-
-
-let isActive: Bool = false
-let isFalse = false
-
 // MARK: return tuple
 
 // does not throw and has two returns
 // protocol Error : Sendable (A type whose values can safely be passed across concurrency domains by copying.)
 func getTitle() -> (title: String?, error: Error?) {
-    if isActive {
+    if isTitle {
         return ("NEW TEXT!", nil)
     } else {
         return (nil, ValidationError.tooLong)
     }
 }
 
+let isTitle: Bool = true // false
 let returnedValue = getTitle()
-
 if let newTitle = returnedValue.title {
     print(newTitle)
 } else if let error = returnedValue.error {
@@ -46,15 +41,15 @@ if let newTitle = returnedValue.title {
 // does not throw but uses the Result iOS 8.0+ (Swift 5.0?)
 // "Until Swift 5.0 added the Result type, it was harder to send back errors with completion handlers" - Paul
 func getTitle2() -> Result<String, Error> {
-    if isActive {
+    if isTitle2 {
         return .success("NEW TEXT!")
     } else {
         return .failure(ValidationError.tooShort)
     }
 }
 
+let isTitle2: Bool = true // false
 let result = getTitle2()
-
 switch result {
 case .success(let newTitle):
     print(newTitle)
@@ -67,7 +62,7 @@ case .failure(let error):
 
 // throws
 func getTitle3() throws -> String {
-    if isActive { // isFalse
+    if isTitle3 { // isFalse
         return "NEW TEXT!"
     } else {
         throw ValidationError.tooShort
@@ -76,7 +71,7 @@ func getTitle3() throws -> String {
 
 // must use try? to see the all throws
 func getTitle4() throws -> String {
-    if isActive {
+    if isTitle4 {
         return "FINAL TEXT!"
     } else {
         throw ValidationError.tooLong
@@ -84,7 +79,8 @@ func getTitle4() throws -> String {
 }
 
 // return here only once.
-
+let isTitle3 = true // false
+let isTitle4 = true // false
 do {
     let newTitle:String? = try getTitle3() // try? will continue to execute after failure
     if let newTitle = newTitle {
@@ -126,7 +122,24 @@ func alwaysGetTitle() -> String { // Important to SwiftUI
     }
 }
 
-// build in SwiftUI View
+// build for SwiftUI View
 print ("always returns a string =  \(alwaysGetTitle())")
+
+
+// what if we throw?
+
+func alwaysThrows() throws {
+    print("throwing")
+    throw ValidationError.tooLong
+}
+
+func callThowFunc() throws {
+    // do not need do{}catch{} if throwing
+    // do {
+    try alwaysThrows()
+    // } catch { print("\(error)") throw ValidationError.tooLong }
+}
+
+// try callThowFunc()
 
 //: [Next](@next)

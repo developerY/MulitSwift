@@ -117,6 +117,7 @@ private func classTest1() {
 classTest1()
 printDivider()
 
+// Different Classes
 private func classTest2() {
     print("classTest2")
     
@@ -124,6 +125,8 @@ private func classTest2() {
     print("Class1: ", class1.title)
     class1.title = "TitleClass1"
     print("Class1: ", class1.title)
+    
+    //let class2 = class1 same class
     
     let class2 = MyClass(title: "Title2")
     print("Class2: ", class2.title)
@@ -137,8 +140,8 @@ printDivider()
 
 /*: Structs */
 
-struct MyStruct {
-    var title: String
+struct MyStructVar {
+    var title: String // change to let
 }
 
 struct MyStructLet {
@@ -148,11 +151,11 @@ struct MyStructLet {
 // Updating a struct creats a new struct.
 private func structTest1() {
     
-    let structA = MyStruct(title: "Starting title!")
+    let structA = MyStructVar(title: "Starting title!")
     print("StructA: ", structA.title)
     
     print("Pass the VALUES of structA to structB.")
-    var structB = structA
+    var structB = structA                              // change to let
     print("StructB: ", structB.title)
     
     structB.title = "Second title!"
@@ -195,26 +198,31 @@ private func structTest2() {
     // structLet.title = "Title1.2" // Uncommnet to see error
     print("Struct1: ", structLet.title)
     
-    let structLet1 = MyStruct(title: "Title1.1")
+    let structLet1 = MyStructVar(title: "Title1.1")
     print("Struct1: ", structLet1.title)
     // structLet1.title = "Title1.2" // Uncomment to see errro
     print("Struct1: ", structLet1.title)
     
-    var struct1 = MyStruct(title: "Title1.1")
+    
+    var struct1 = MyStructVar(title: "Title1.1")
     print("Struct1: ", struct1.title)
     struct1.title = "Title1.2"
     print("Struct1: ", struct1.title)
     
-    var struct2 = CustomStruct(title: "CustomTitle2.1")
+    // Create a new Struct
+    var /*NOT let*/ struct2 = CustomStruct(title: "CustomTitle2.1")
     print("Struct2: ", struct2.title)
     struct2 = CustomStruct(title: "CustomTitle2.2")
     print("Struct2: ", struct2.title)
     
+    // Update the title same as making a new Struct
     var struct3 = CustomStruct(title: "CustomTitle3.1")
     print("Struct3: ", struct3.title)
     struct3 = struct3.updateTitle(newTitle: "CustomTitle3.2")
     print("Struct3: ", struct3.title)
     
+    
+    // Even this makes a new Struct
     var struct4 = MutatingStruct(title: "MutatingTitle1.1")
     print("Struct4: ", struct4.title)
     struct4.updateTitle(newTitle: "MutatingTitle2.1")
@@ -240,7 +248,7 @@ private func actorTest1() {
     Task {
         print("actorTest1")
         let objectA = MyActor(title: "Starting title!")
-        await print("ObjectA: ", objectA.title)
+        await print("ObjectA: ", objectA.title) // must await an actor - only one thread at a time
         
         print("Pass the REFERENCE of objectA to objectB.")
         let objectB = objectA
@@ -253,6 +261,8 @@ private func actorTest1() {
         await print("ObjectB: ", objectB.title)
     }
 }
+
+actorTest1()
 
 
 /*struct MyView : View {

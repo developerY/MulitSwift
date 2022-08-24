@@ -15,20 +15,12 @@ import SwiftUI
 import Combine
 import PlaygroundSupport
 
-// Swift 5.5 Async / Await
-var greeting = "Hello, playground"
-let paul = URL(string: "https://www.hackingwithswift.com/img/paul@2x.png")
-
-// Random Pic
-
-var randomPic = URL(string: "https://source.unsplash.com/random/300x200")
-let pic = URL(string: "https://images.unsplash.com/photo-1526849875464-471c91f5ecae?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=510&q=200")
-
 
 // MARK: From Nick
 // MARK: Closure
 let url = URL(string: "https://picsum.photos/200")!
 
+//Passed to the completion handler
 func handleResponse(data: Data?, response: URLResponse?) -> UIImage? {
     guard
         let data = data,
@@ -53,6 +45,7 @@ func downloadWithEscaping(completionHandler: @escaping (_ image: UIImage?, _ err
 }
 
 // MARK: Combine
+// Using Combine URLSession -- Very Clean but does not throw
 func downloadWithCombine() -> AnyPublisher<UIImage?, Error> {
     URLSession.shared.dataTaskPublisher(for: url)
         .map(handleResponse)
@@ -62,6 +55,7 @@ func downloadWithCombine() -> AnyPublisher<UIImage?, Error> {
 
 
 // MARK: Async
+// Using async await URLSession -- Very Clean
 func downloadWithAsync() async throws -> UIImage? {
     do {
         // iOS 7.0+ but the added async version (like many of there oler APIs)
@@ -72,13 +66,45 @@ func downloadWithAsync() async throws -> UIImage? {
     }
 }
 
-
-// From Swift 5.5
-func inCount() async {
-    try? await Task.sleep(nanoseconds: 2_000_000_000)
-    randomPic = URL(string: "https://source.unsplash.com/random/300x200?sig=\(Int.random(in: 1..<100))")
-    
+struct SwiftUIAsyncImage : View {
+    @State var msg = "blank"
+    @State var imgURL = "https://picsum.photos/100"
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Text(msg)
+            // iOS 15.0+
+            
+            AsyncImage(url: URL(string:"https://picsum.photos/100")) { phase in
+                if let image = phase.image {
+                    image // Displays the loaded image.
+                } else if phase.error != nil {
+                    Color.red // Indicates an error.
+                } else {
+                    Color.blue // Acts as a placeholder.
+                }
+            }
+            
+            
+            // Amazing rotating image viewer in a few lines of code
+            AsyncImage(url: URL(string:imgURL)) { image in
+                image.resizable()
+                    .aspectRatio(contentMode:.fit)
+            } placeholder: {
+                ProgressView()
+            }.task {
+                while(true) {
+                    try? await Task.sleep(nanoseconds: 4_000_000_000)
+                    let rand = Int.random(in: 100...150)
+                    imgURL = "https://picsum.photos/\(rand)"
+                    print("This is the URL \(imgURL)")
+                }
+            }
+        }
+        .frame(minWidth: 100,
+               minHeight: 200)
+    }
 }
+
 
 struct AsycnImgView: View {
     @State var msg = "blank"
@@ -114,20 +140,11 @@ struct ContentView: View {
     var body: some View {
         
         VStack() {
-            VStack(alignment: .leading, spacing: 20) {
-                // iOS 15.0+
-                AsyncImage(url: randomPic) { image in
-                    image.resizable()
-                        .aspectRatio(contentMode:.fit)
-                } placeholder: {
-                    ProgressView()
-                }/*.task {
-                  await inCount()
-                  }*/
-            }
-            .frame(minWidth: 100,
-                   minHeight: 200)
+            
+            SwiftUIAsyncImage()
+            
             AsycnImgView()
+            
         }.frame(minWidth: 100,
                 minHeight: 500)
     }

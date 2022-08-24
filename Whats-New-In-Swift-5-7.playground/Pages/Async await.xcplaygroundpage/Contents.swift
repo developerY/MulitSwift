@@ -16,15 +16,8 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-// Command - Shift - a
-nonisolated public func requestAuthorization(completionHandler: @escaping () -> Void ) {
-    Task {
-        completionHandler()
-    }
-}
-
-// var rCount = 1 rCount = Int.random(in: 0...10)
 // @escaping because outlives function
+// Return a array of doubles
 func fetchWeatherHistory(completion: @escaping ([Double]) -> Void) {
     // Complex networking code here; we'll just send back 100 random temperatures
     DispatchQueue.global().async {
@@ -34,6 +27,7 @@ func fetchWeatherHistory(completion: @escaping ([Double]) -> Void) {
     }
 }
     
+// Return a single Double value
 func calculateAverageTemperature(for records: [Double], completion: @escaping (Double) -> Void) {
     // Sum our array then divide by the array size
     DispatchQueue.global().async {
@@ -42,7 +36,8 @@ func calculateAverageTemperature(for records: [Double], completion: @escaping (D
         completion(average)
     }
 }
-    
+   
+// Return a singe String
 func upload(result: Double, completion: @escaping (String) -> Void) {
     // More complex networking code; we'll just send back "OK"
     DispatchQueue.global().async {
@@ -54,9 +49,14 @@ I’ve substituted actual networking code with fake values because the networkin
 
 When it comes to using that code, we need to call them one by one in a chain, providing completion closures for each one to continue the chain, like this:
 */
-fetchWeatherHistory { records in
-    calculateAverageTemperature(for: records) { average in
-        upload(result: average) { response in
+// takes on argument a closure
+fetchWeatherHistory { records in // returns an array of doubles
+    
+    // takes two arguments ( 1. array of double  2. a closure )
+    calculateAverageTemperature(for: records) { average in // takes array of doubles & returns double
+        
+        // Takes two arguments ( 1. double 2. a closure )
+        upload(result: average) { response in // takes a double and returns a String
             print("Grand Dispatch server: average \(average) response: \(response)")
         }
     }
