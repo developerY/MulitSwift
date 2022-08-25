@@ -14,15 +14,16 @@ This playground is designed to showcase new features introduced in Swift 5.5 - 5
 
  
 Topics Covered
-Async / Await [Section 1]
-* Async sequences (Sequences / Streams)
-* Effectful read-only properties
-* Structured concurrency
-* async let bindings
+* Review: Do / Try / Catch / Thow(s)
+* Review: Stack vs Heap - Struc vs Class vs Actor - Using Threads
+* Async / Await - Backgound tasks on various threads
+* Async Let bindings - Doing mutiple tasks at once
+* Basic structured concurrency - Sleep, Cancel, Task Groups
 * Continuations for interfacing async tasks with synchronous code
-Task & Task Groups [Section 2]
-Actors [Section 3]
-* Global Actors
-* Sendable and @Sendable closures
+* Actors
+* Swift structued concurrency with SwiftUI
+* Async sequences
+* AsyncAlgorithms: async zip & merge
 
-Instruments 14 beta — Product — Profile —Swift Concurrency
+Ending with:
+Instruments 14 beta Profiler for Swift concurrency
