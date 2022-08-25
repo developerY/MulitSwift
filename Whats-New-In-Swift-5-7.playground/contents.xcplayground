@@ -5,8 +5,8 @@
         <page name='DoCatchTryThrows'/>
         <page name='StructClassActor'/>
         <page name='LoadImage'/>
-        <page name='Structured concurrency'/>
         <page name='Async await'/>
+        <page name='Structured concurrency'/>
         <page name='async let bindings'/>
         <page name='Continuations for interfacing async tasks with synchronous code'/>
         <page name='Actors'/>
