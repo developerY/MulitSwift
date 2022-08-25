@@ -14,7 +14,7 @@ This playground is designed to showcase new features introduced in Swift 5.5 - 5
 
  
 Topics Covered
-* Review: Do / Try / Catch / Thow(s)
+* Review: Do / Try / Catch / Throw(s)
 * Review: Stack vs Heap - Struc vs Class vs Actor - Using Threads
 * Async / Await - Background tasks on various threads
 * Async Let bindings - Doing multiple tasks at once
