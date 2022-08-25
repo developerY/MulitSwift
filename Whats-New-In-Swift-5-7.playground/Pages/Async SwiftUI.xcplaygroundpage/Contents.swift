@@ -26,12 +26,13 @@ func addEverSec(count : Int) async -> Int {
     static var shared = MyNewDataManager() // <- Access point
 }
 
-actor MyNewDataManager {
+actor MyNewDataManager { // cannot make a class
     func getDataFromDatabase() -> [String] {
         return ["One", "Two", "Three", "Four", "Five"]
     }
 }
 
+// @MainActor works but is waistful
 class GlobalActorBootcampViewModel: ObservableObject {
     // Must run on Main Actor (main thread/ UI Thread)
     @MainActor @Published var dataArray: [String] = []
@@ -42,9 +43,11 @@ class GlobalActorBootcampViewModel: ObservableObject {
         
         // HEAVY COMPLEX METHODS
         Task {
-            // Run on the Global Actor
+            
+            // Run on the Global Actor (must await)
             let data = await manager.getDataFromDatabase()
             print("Global Actor : \(Thread.current)")
+            
             // Run back on the Main Actor
             await MainActor.run(body: {
                 print("Main Actor : \(Thread.current)")

@@ -28,6 +28,7 @@ class RiskyCollector {
             print("\(name) dose not have \(selected)")
             return false }
         
+        // Critical Section
         print("--- Deck has \(selected) --- for \(person.name)")
         // sleep(1)
         if let removed = deck.remove(selected) {

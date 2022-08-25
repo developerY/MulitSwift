@@ -13,9 +13,6 @@ class ImageService: ObservableObject {
     // This is already reactive.
     @Published private(set) var url = URL(string: "https://source.unsplash.com/random/300x200")
     @Published private(set) var count = 0
-           
-    //From Combine
-    let timer : Publishers.Autoconnect<Timer.TimerPublisher> = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     // From Swift 5.5
     func inCount() async {

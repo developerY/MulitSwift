@@ -77,7 +77,7 @@ struct DynamicListViewUI: View {
     }
 }
 
-struct ZipListViewUI: View {
+struct ZipMergeViewUI: View {
     @StateObject private var viewModel = ViewModel()
 
     var body: some View {
@@ -121,7 +121,7 @@ struct DemoListViewUI: View {
     var body: some View {
         
         VStack {
-            ZipListViewUI()
+            ZipMergeViewUI()
             DynamicListViewUI()
         }
         
