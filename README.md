@@ -16,12 +16,12 @@ This playground is designed to showcase new features introduced in Swift 5.5 - 5
 Topics Covered
 * Review: Do / Try / Catch / Thow(s)
 * Review: Stack vs Heap - Struc vs Class vs Actor - Using Threads
-* Async / Await - Backgound tasks on various threads
-* Async Let bindings - Doing mutiple tasks at once
+* Async / Await - Background tasks on various threads
+* Async Let bindings - Doing multiple tasks at once
 * Basic structured concurrency - Sleep, Cancel, Task Groups
 * Continuations for interfacing async tasks with synchronous code
 * Actors
-* Swift structued concurrency with SwiftUI
+* Swift structured concurrency with SwiftUI
 * Async sequences
 * AsyncAlgorithms: async zip & merge
 
