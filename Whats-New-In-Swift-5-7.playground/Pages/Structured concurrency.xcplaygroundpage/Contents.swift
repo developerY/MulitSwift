@@ -135,19 +135,23 @@ func runMultipleCalculations() async throws {
         try await getWeatherReadings(for: "Does not exist")
     }
     
-    let result1 = await task1.value // result1 is ready to use
-    let result2 = try await task2.value // resualt 2 is ready to use
-    print("Fibonacci (7): \(result1) Rome weather: \(result2)")
+    let value1 = await task1.value // value 1 is ready to use
+    let value2 : [Double] = try await task2.value // value 2 is ready to use
+    let result1 : Result<[Int], Never> = await task1.result
+    let result2 : Result<[Double], Error> = await task2.result
+    print("Fibonacci (7): r \(result1) v \(value1) \n Rome weather: v \(value2)")
     
+    // becuase throws do not need a do block
     let result3 = try await task3.value // resualt 3 is ready to use with error
+    print("result3 \(result3)")
 }
 
 func runMultiTask() {
     Task {
         // catch not error?
-        //do {
-        print("multi task", try await runMultipleCalculations())
-        //} catch { print("\(error)")}
+        do {
+            try await runMultipleCalculations()
+        } catch { print("\(error)")}
     }
 }
 runMultiTask()
@@ -182,6 +186,12 @@ func cancelSleepingTask() async {
     } catch {
         print("Task was cancelled.", error) // NOTE: <--We see this
     }
+    
+    // do not need do block becuse we are not trying to use the value!
+    let result = await task.result
+    // await task.value // will cause an error because try is missing
+    print("Result \(result)")
+    
 }
 
 Task {
@@ -204,7 +214,7 @@ waitDoneBeforeNext()
  To see a simple example of how task groups work – along with demonstrating an important point of how they order their operations, try this:
  */
 func printTaskGroupMessage() async {
-    let string = await withTaskGroup(of: String.self) { group -> String in
+    let taskGroupString = await withTaskGroup(of: String.self) { group -> String in
         group.addTask { "Hello" }
         
         group.addTask { "From" }
@@ -227,10 +237,10 @@ func printTaskGroupMessage() async {
         return ans
     }
     
-    print("This is the collected String: ",string)
+    print("This is the collected String: ", taskGroupString)
 }
 
-Task.init{
+Task{
     print("Start Task Group Message: ", await printTaskGroupMessage())
 }
 waitDoneBeforeNext()
@@ -245,7 +255,7 @@ waitDoneBeforeNext()
  
  For example, this next code sample calculates weather readings for several locations in a single group, then returns the overall average for all locations:
  */
-func printAllWeatherReadings() async {
+func printAllWeatherReadings() async  { // remove do block. Add throws and try
     do {
         print("Calculating average weather…")
         
@@ -263,7 +273,7 @@ func printAllWeatherReadings() async {
             }
             
             // Uncomment for error
-            // group.addTask {try await getWeatherReadings(for: "Not Here")}
+            group.addTask {try await getWeatherReadings(for: "Not Here")}
             
             // Convert our array of arrays into a single array of doubles
             let allValues = try await group.reduce([], +)
@@ -274,9 +284,7 @@ func printAllWeatherReadings() async {
         }
         
         print("Done! \(result)")
-    } catch {
-        print("Error calculating data. With error: \(error)", error)
-    }
+    } catch { print("Error calculating data. With error: \(error)", error) }
 }
 
 Task {
@@ -362,7 +370,7 @@ PlaygroundPage.current
 
 
 
-
+// lets review task priority
 Task {
     print(Thread.current)
     print(Task.currentPriority)
@@ -370,37 +378,37 @@ Task {
 }
 
 
-//            Task(priority: .high) {
-//                try? await Task.sleep(nanoseconds: 2_000_000_000)
-//                await Task.yield()
-//                print("high : \(Thread.current) : \(Task.currentPriority)")
-//            }
-//            Task(priority: .userInitiated) {
-//                print("userInitiated : \(Thread.current) : \(Task.currentPriority)")
-//            }
-//            Task(priority: .medium) {
-//                print("medium : \(Thread.current) : \(Task.currentPriority)")
-//            }
-//            Task(priority: .low) {
-//                print("low : \(Thread.current) : \(Task.currentPriority)")
-//            }
-//            Task(priority: .utility) {
-//                print("utility : \(Thread.current) : \(Task.currentPriority)")
-//            }
-//            Task(priority: .background) {
-//                print("background : \(Thread.current) : \(Task.currentPriority)")
-//            }
+Task(priority: .high) {
+    try? await Task.sleep(nanoseconds: 2_000_000_000)
+    await Task.yield()
+    print("high : \(Thread.current) : \(Task.currentPriority)")
+}
+Task(priority: .userInitiated) {
+    print("userInitiated : \(Thread.current) : \(Task.currentPriority)")
+}
+Task(priority: .medium) {
+    print("medium : \(Thread.current) : \(Task.currentPriority)")
+}
+Task(priority: .low) {
+    print("low : \(Thread.current) : \(Task.currentPriority)")
+}
+Task(priority: .utility) {
+    print("utility : \(Thread.current) : \(Task.currentPriority)")
+}
+Task(priority: .background) {
+    print("background : \(Thread.current) : \(Task.currentPriority)")
+}
 
 
-            // Both have the same priority --
-//            Task(priority: .low) {
-//                print("low : \(Thread.current) : \(Task.currentPriority)")
-
-
-//                Task { // .detached
-//                    print("try detached : \(Thread.current) : \(Task.currentPriority)")
-//                }
-//            }
+//Both have the same priority --
+Task(priority: .low) {
+    print("low : \(Thread.current) : \(Task.currentPriority)")
+    
+    
+    Task { // .detached
+        print("try detached : \(Thread.current) : \(Task.currentPriority)")
+    }
+}
 
 /*:
  [< Previous](@previous)           [Home](Introduction)           [Next >](@next)
