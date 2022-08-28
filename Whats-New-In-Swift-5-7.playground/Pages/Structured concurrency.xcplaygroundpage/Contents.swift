@@ -77,41 +77,46 @@ struct Main {
  So, we might call `fibonacci(of:)` many times on a background thread, in order to calculate the first 5 numbers in the sequence:
  */
 func printFibonacciSequence() async -> String {
+    
     let task1 = Task { () -> [Int] in  // takes void and returns an array of Int
         var numbers = [Int]()
-        
         for i in 0..<5 {
             let result = fibonacci(of: i)
             numbers.append(result)
         }
-        
-        return numbers
+        return numbers // Task returns values when asked but already running.
     }
     
     let result1 = await task1.value // let task1: Task<[Int], Never>
+    
+    
     print("Fibonacci sequence (5): \(result1)")
     return "DONE"
 }
 
-print("we start Fib(5) task")
-Task {
-    await print("run Fib(5) ", printFibonacciSequence())
-    print("now we can use the results")
+func returnDemo() {
+    print("we start Fib(5) task")
+    Task {
+        await print("run Fib(5) ", printFibonacciSequence())
+        print("now we can use the results")
+    }
+    print("we end but the code is still running so we can not use the results here  :-)")
 }
-print("we end but the code is still running so we can not use the results here  :-)")
-waitDoneBeforeNext()
+// returnDemo() //waitDoneBeforeNext()
 /*:
  As you can see, I’ve needed to explicitly write `Task { () -> [Int] in` so that Swift understands that the task is going to return, but if your task code is simpler that isn’t needed. For example, we could have written this and gotten exactly the same result:
  */
 let task1 = Task {
-    (0..<12).map(fibonacci)
+    (0..<12).map(fibonacci) // understood return
 }
 
 
-Task {
-    print("running task1 Fib(12) with no return", await task1.value)
+func noReturnDemo() {
+    Task {
+        print("running task1 Fib(12) with no return", await task1.value)
+    }
 }
-waitDoneBeforeNext()
+// noReturnDemo() waitDoneBeforeNext()
 
 /*:
  Again, the task starts running as soon as it’s created, and the `printFibonacciSequence()` function will continue running on whichever thread it was while the Fibonacci numbers are being calculated.
@@ -134,7 +139,7 @@ func runMultipleCalculations() async throws {
     let task3 = Task { // Started here
         try await getWeatherReadings(for: "Does not exist")
     }
-    
+
     let value1 = await task1.value // value 1 is ready to use
     let value2 : [Double] = try await task2.value // value 2 is ready to use
     let result1 : Result<[Int], Never> = await task1.result
@@ -146,16 +151,15 @@ func runMultipleCalculations() async throws {
     print("result3 \(result3)")
 }
 
-func runMultiTask() {
+func runMultiTaskDemo() {
     Task {
         // catch not error?
-        do {
+        //do {
             try await runMultipleCalculations()
-        } catch { print("\(error)")}
+        //} catch { print("\(error)")}
     }
 }
-runMultiTask()
-waitDoneBeforeNext()
+// runMultiTaskDemo() // waitDoneBeforeNext()
 /*:
  Swift provides us with the built-in task priorities of `high`, `default`, `low`, and `background`. The code above doesn’t specifically set one so it will get `default`, but we could have said something like `Task(priority: .high)` to customize that. If you’re writing just for Apple’s platforms, you can also use the more familiar priorities of `userInitiated` in place of high, and `utility` in place of `low`, but you *can’t* access `userInteractive` because that is reserved for the main thread.
  
@@ -194,10 +198,12 @@ func cancelSleepingTask() async {
     
 }
 
-Task {
-    print("Calling sleeping/cancle task", await cancelSleepingTask())
+func sleepingDemo() {
+    Task {
+        print("Calling sleeping/cancle task", await cancelSleepingTask())
+    }
 }
-waitDoneBeforeNext()
+//sleeping() // waitDoneBeforeNext()
 
 
 /*:
@@ -215,7 +221,7 @@ waitDoneBeforeNext()
  */
 func printTaskGroupMessage() async {
     let taskGroupString = await withTaskGroup(of: String.self) { group -> String in
-        group.addTask { "Hello" }
+        group.addTask { "Hello" } // a closure that returns a String
         
         group.addTask { "From" }
         group.addTask { "A" }
@@ -240,10 +246,12 @@ func printTaskGroupMessage() async {
     print("This is the collected String: ", taskGroupString)
 }
 
-Task{
-    print("Start Task Group Message: ", await printTaskGroupMessage())
+func taskGroupDemo() {
+    Task{
+        print("Start Task Group Message: ", await printTaskGroupMessage())
+    }
 }
-waitDoneBeforeNext()
+// taskGroupDemo() // waitDoneBeforeNext()
 /*:
  That creates a task group designed to produce one finished string, then queues up several closures using the `async()` method of the task group. Each of those closures returns a single string, which then gets collected into an array of strings, before being joined into one single string and returned for printing.
  
@@ -256,6 +264,7 @@ waitDoneBeforeNext()
  For example, this next code sample calculates weather readings for several locations in a single group, then returns the overall average for all locations:
  */
 func printAllWeatherReadings() async  { // remove do block. Add throws and try
+    let cities = ["London", "Rome", "San Francisco"]
     do {
         print("Calculating average weather…")
         
@@ -273,7 +282,21 @@ func printAllWeatherReadings() async  { // remove do block. Add throws and try
             }
             
             // Uncomment for error
-            group.addTask {try await getWeatherReadings(for: "Not Here")}
+            // group.addTask {try await getWeatherReadings(for: "Not Here")}
+            
+            for city in cities {
+                // all task are same and only need to cancle one time
+                group.addTask {
+                    try await getWeatherReadings(for: city)
+                }
+            }
+            
+            print("\n\nStart for loop")
+            for try await city in group { // because they all return the same type
+                print("This is the temp \(String(describing: city.first))")
+            }
+            print("End for loop \n\n")
+            
             
             // Convert our array of arrays into a single array of doubles
             let allValues = try await group.reduce([], +)
@@ -281,16 +304,19 @@ func printAllWeatherReadings() async  { // remove do block. Add throws and try
             // Calculate the mean average of all our doubles
             let average = allValues.reduce(0, +) / Double(allValues.count)
             return "Overall average temperature is \(average)"
+            
         }
         
         print("Done! \(result)")
     } catch { print("Error calculating data. With error: \(error)", error) }
 }
 
-Task {
-    print("Start Task Weather with error:", await printAllWeatherReadings())
+func GroupDemo() {
+    Task {
+        print("Start Task Weather:", await printAllWeatherReadings())
+    }
 }
-waitDoneBeforeNext()
+//GroupDemo() // waitDoneBeforeNext()
 /*:
  In that instance, each of the calls to `async()` is identical apart from the location string being passed in, so you can use something like `for location in ["London", "Rome", "San Francisco"] {` to call `async()` in a loop.
  
@@ -371,42 +397,43 @@ PlaygroundPage.current
 
 
 // lets review task priority
-Task {
+/*Task {
     print(Thread.current)
     print(Task.currentPriority)
-    //await viewModel.fetchImage2()
-}
+}*/
 
 
-Task(priority: .high) {
-    try? await Task.sleep(nanoseconds: 2_000_000_000)
-    await Task.yield()
-    print("high : \(Thread.current) : \(Task.currentPriority)")
-}
-Task(priority: .userInitiated) {
-    print("userInitiated : \(Thread.current) : \(Task.currentPriority)")
-}
-Task(priority: .medium) {
-    print("medium : \(Thread.current) : \(Task.currentPriority)")
-}
-Task(priority: .low) {
-    print("low : \(Thread.current) : \(Task.currentPriority)")
-}
-Task(priority: .utility) {
-    print("utility : \(Thread.current) : \(Task.currentPriority)")
-}
-Task(priority: .background) {
-    print("background : \(Thread.current) : \(Task.currentPriority)")
-}
-
-
-//Both have the same priority --
-Task(priority: .low) {
-    print("low : \(Thread.current) : \(Task.currentPriority)")
+func ShowTasks() {
+    Task(priority: .high) {
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        await Task.yield()
+        print("high : \(Thread.current) : \(Task.currentPriority)")
+    }
+    Task(priority: .userInitiated) {
+        print("userInitiated : \(Thread.current) : \(Task.currentPriority)")
+    }
+    Task(priority: .medium) {
+        print("medium : \(Thread.current) : \(Task.currentPriority)")
+    }
+    Task(priority: .low) {
+        print("low : \(Thread.current) : \(Task.currentPriority)")
+    }
+    Task(priority: .utility) {
+        print("utility : \(Thread.current) : \(Task.currentPriority)")
+    }
+    Task(priority: .background) {
+        print("background : \(Thread.current) : \(Task.currentPriority)")
+    }
     
     
-    Task { // .detached
-        print("try detached : \(Thread.current) : \(Task.currentPriority)")
+    //Both have the same priority --
+    Task(priority: .low) {
+        print("low : \(Thread.current) : \(Task.currentPriority)")
+        
+        
+        Task { // .detached
+            print("try detached : \(Thread.current) : \(Task.currentPriority)")
+        }
     }
 }
 

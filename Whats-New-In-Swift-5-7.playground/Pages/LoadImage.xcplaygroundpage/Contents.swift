@@ -66,6 +66,36 @@ func downloadWithAsync() async throws -> UIImage? {
     }
 }
 
+struct AsycnImgView: View {
+    @State var msg = "blank"
+    @State var img: UIImage?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Text(msg)
+            if let goodImg = img {
+                Image(uiImage:goodImg)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 200)
+            }
+        }.onAppear() {
+            Task {
+                do {
+                    if let downLoadImg = try await downloadWithAsync() {
+                        img = downLoadImg
+                        msg = "Done loading image"
+                    }
+                }catch {
+                    msg = error.localizedDescription
+                }
+            }
+            msg = "Loading image"
+        }
+        
+    }
+}
+
 struct SwiftUIAsyncImage : View {
     @State var msg = "blank"
     @State var imgURL = "https://picsum.photos/100"
@@ -106,45 +136,14 @@ struct SwiftUIAsyncImage : View {
 }
 
 
-struct AsycnImgView: View {
-    @State var msg = "blank"
-    @State var img: UIImage?
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text(msg)
-            if let goodImg = img {
-                Image(uiImage:goodImg)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 200)
-            }
-        }.onAppear() {
-            Task {
-                do {
-                    if let downLoadImg = try await downloadWithAsync() {
-                        img = downLoadImg
-                        msg = "Done loading image"
-                    }
-                }catch {
-                    msg = error.localizedDescription
-                }
-            }
-            msg = "Loading image"
-        }
-        
-    }
-}
+
 
 struct ContentView: View {
     var body: some View {
         
         VStack() {
-            
-            SwiftUIAsyncImage()
-            
             AsycnImgView()
-            
+            SwiftUIAsyncImage()
         }.frame(minWidth: 100,
                 minHeight: 500)
     }
