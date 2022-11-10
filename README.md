@@ -27,3 +27,5 @@ Topics Covered
 
 Ending with:
 Instruments 14 beta Profiler for Swift concurrency
+
+Video of session: https://github.com/developerY/MulitSwift
